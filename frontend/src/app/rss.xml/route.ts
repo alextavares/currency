@@ -12,33 +12,37 @@ export async function GET(): Promise<Response> {
     .map((post) => {
       const url = `${siteUrl}/blog/${post.slug}`;
       const pubDate = safeRssDate(post.date) ?? new Date().toUTCString();
-      return [
-        '<item>',
-        `<title><![CDATA[${post.title}]]></title>`,
-        `<link>${escapeXml(url)}</link>`,
-        `<guid isPermaLink="true">${escapeXml(url)}</guid>`,
-        `<pubDate>${pubDate}</pubDate>`,
-        post.excerpt ? `<description><![CDATA[${post.excerpt}]]></description>` : '',
-        '</item>',
-      ]
-        .filter(Boolean)
-        .join('');
+      return (
+        [
+          '<item>',
+          `<title><![CDATA[${post.title}]]></title>`,
+          `<link>${escapeXml(url)}</link>`,
+          `<guid isPermaLink="true">${escapeXml(url)}</guid>`,
+          `<pubDate>${pubDate}</pubDate>`,
+          post.excerpt ? `<description><![CDATA[${post.excerpt}]]></description>` : '',
+          '</item>',
+        ]
+          .filter(Boolean)
+          .join('\n') + '\n'
+      );
     })
     .join('');
 
-  const xml =
-    `<?xml version="1.0" encoding="UTF-8"?>` +
-    `<rss version="2.0">` +
-    `<channel>` +
-    `<title><![CDATA[LiveForexStrength]]></title>` +
-    `<link>${escapeXml(siteUrl)}</link>` +
-    `<description><![CDATA[Forex market analysis and currency strength insights.]]></description>` +
-    `<language>en</language>` +
-    `<lastBuildDate>${new Date().toUTCString()}</lastBuildDate>` +
-    `<ttl>60</ttl>` +
-    itemsXml +
-    `</channel>` +
-    `</rss>`;
+  const xml = [
+    `<?xml version="1.0" encoding="UTF-8"?>`,
+    `<rss version="2.0">`,
+    `<channel>`,
+    `<title><![CDATA[LiveForexStrength]]></title>`,
+    `<link>${escapeXml(siteUrl)}</link>`,
+    `<description><![CDATA[Forex market analysis and currency strength insights.]]></description>`,
+    `<language>en</language>`,
+    `<lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`,
+    `<ttl>60</ttl>`,
+    itemsXml.trimEnd(),
+    `</channel>`,
+    `</rss>`,
+    ``,
+  ].join('\n');
 
   return new Response(xml, {
     headers: {
@@ -62,4 +66,3 @@ function escapeXml(input: string): string {
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&apos;');
 }
-
