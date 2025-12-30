@@ -7,6 +7,19 @@ export const metadata: Metadata = {
   title: 'Market Analysis Blog',
   description: 'Forex market analysis, currency strength insights, and strength-based trade ideas.',
   alternates: { canonical: '/blog' },
+  openGraph: {
+    type: 'website',
+    url: '/blog',
+    title: 'Market Analysis Blog',
+    description: 'Forex market analysis, currency strength insights, and strength-based trade ideas.',
+    images: [{ url: '/opengraph-image' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Market Analysis Blog',
+    description: 'Forex market analysis, currency strength insights, and strength-based trade ideas.',
+    images: ['/opengraph-image'],
+  },
 };
 
 export default function BlogIndex() {
