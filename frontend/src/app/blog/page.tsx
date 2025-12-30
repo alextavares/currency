@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getAllPosts } from '@/lib/blog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Metadata } from 'next';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Market Analysis Blog',
@@ -24,48 +25,88 @@ export const metadata: Metadata = {
 
 export default function BlogIndex() {
   const posts = getAllPosts();
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://liveforexstrength.com').replace(
+    /\/+$/,
+    '',
+  );
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Dashboard',
+        item: `${siteUrl}/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: `${siteUrl}/blog`,
+      },
+    ],
+  };
+
+  const listSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: posts.map((post, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      url: `${siteUrl}/blog/${post.slug}`,
+      name: post.title,
+    })),
+  };
 
   return (
-    <div className="container mx-auto py-10 px-4">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold tracking-tight">Market Analysis</h1>
-        <Link 
-          href="/" 
-          className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline"
-        >
-          ← Back to Dashboard
-        </Link>
-      </div>
+    <>
+      <Script id="blog-breadcrumbs-jsonld" type="application/ld+json" strategy="beforeInteractive">
+        {JSON.stringify(breadcrumbSchema)}
+      </Script>
+      <Script id="blog-itemlist-jsonld" type="application/ld+json" strategy="beforeInteractive">
+        {JSON.stringify(listSchema)}
+      </Script>
 
-      {posts.length === 0 ? (
-        <div className="text-center py-20 text-gray-500">
-          <p className="text-xl">No analysis articles published yet.</p>
-          <p className="mt-2">Check back soon for daily market updates.</p>
+      <div className="container mx-auto py-10 px-4">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold tracking-tight">Market Analysis</h1>
+          <Link href="/" className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">
+            ← Back to Dashboard
+          </Link>
         </div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
-            <Link href={`/blog/${post.slug}`} key={post.slug} className="group">
-              <Card className="h-full transition-all hover:shadow-lg border-gray-200 hover:border-blue-200">
-                <CardHeader>
-                  <div className="text-sm text-gray-500 mb-2">{post.date}</div>
-                  <CardTitle className="group-hover:text-blue-600 transition-colors">
-                    {post.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 line-clamp-3">
-                    {post.excerpt || 'Read the full market analysis...'}
-                  </p>
-                  <div className="mt-4 text-sm font-medium text-blue-500 group-hover:underline">
-                    Read Analysis →
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
+
+        {posts.length === 0 ? (
+          <div className="text-center py-20 text-gray-500">
+            <p className="text-xl">No analysis articles published yet.</p>
+            <p className="mt-2">Check back soon for daily market updates.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => (
+              <Link href={`/blog/${post.slug}`} key={post.slug} className="group">
+                <Card className="h-full transition-all hover:shadow-lg border-gray-200 hover:border-blue-200">
+                  <CardHeader>
+                    <div className="text-sm text-gray-500 mb-2">{post.date}</div>
+                    <CardTitle className="group-hover:text-blue-600 transition-colors">
+                      {post.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 line-clamp-3">
+                      {post.excerpt || 'Read the full market analysis...'}
+                    </p>
+                    <div className="mt-4 text-sm font-medium text-blue-500 group-hover:underline">
+                      Read Analysis →
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }

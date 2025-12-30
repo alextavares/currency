@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'FAQ',
@@ -40,41 +41,64 @@ const FAQ_ENTRIES: Array<{ q: string; a: string }> = [
 ];
 
 export default function FaqPage() {
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://liveforexstrength.com').replace(
+    /\/+$/,
+    '',
+  );
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${siteUrl}/faq#faq`,
+    url: `${siteUrl}/faq`,
+    mainEntity: FAQ_ENTRIES.map((e) => ({
+      '@type': 'Question',
+      name: e.q,
+      acceptedAnswer: { '@type': 'Answer', text: e.a },
+    })),
+  };
+
   return (
-    <main className="min-h-screen text-slate-900 dark:text-white">
-      <div className="pointer-events-none fixed inset-0 -z-10 hidden dark:block bg-[radial-gradient(900px_circle_at_20%_10%,rgba(59,130,246,0.18),transparent_55%),radial-gradient(800px_circle_at_80%_20%,rgba(16,185,129,0.12),transparent_55%),linear-gradient(to_bottom,rgba(2,6,23,1),rgba(0,0,0,1))]" />
-      <div className="pointer-events-none fixed inset-0 -z-10 dark:hidden bg-[radial-gradient(900px_circle_at_20%_10%,rgba(106,34,179,0.10),transparent_60%),radial-gradient(800px_circle_at_80%_20%,rgba(61,96,141,0.10),transparent_60%),linear-gradient(to_bottom,rgba(244,245,250,1),rgba(244,245,250,1))]" />
+    <>
+      <Script id="faq-jsonld" type="application/ld+json" strategy="beforeInteractive">
+        {JSON.stringify(schema)}
+      </Script>
 
-      <div className="container mx-auto max-w-4xl p-4 sm:p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">FAQ</h1>
-          <Link
-            href="/"
-            className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline dark:text-blue-300 dark:hover:text-blue-200"
-          >
-            ← Back to Dashboard
-          </Link>
+      <main className="min-h-screen text-slate-900 dark:text-white">
+        <div className="pointer-events-none fixed inset-0 -z-10 hidden dark:block bg-[radial-gradient(900px_circle_at_20%_10%,rgba(59,130,246,0.18),transparent_55%),radial-gradient(800px_circle_at_80%_20%,rgba(16,185,129,0.12),transparent_55%),linear-gradient(to_bottom,rgba(2,6,23,1),rgba(0,0,0,1))]" />
+        <div className="pointer-events-none fixed inset-0 -z-10 dark:hidden bg-[radial-gradient(900px_circle_at_20%_10%,rgba(106,34,179,0.10),transparent_60%),radial-gradient(800px_circle_at_80%_20%,rgba(61,96,141,0.10),transparent_60%),linear-gradient(to_bottom,rgba(244,245,250,1),rgba(244,245,250,1))]" />
+
+        <div className="container mx-auto max-w-4xl p-4 sm:p-6">
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-3xl font-bold tracking-tight">FAQ</h1>
+            <Link
+              href="/"
+              className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline dark:text-blue-300 dark:hover:text-blue-200"
+            >
+              ← Back to Dashboard
+            </Link>
+          </div>
+
+          <div className="space-y-4">
+            {FAQ_ENTRIES.map((e) => (
+              <FaqItem key={e.q} q={e.q}>
+                {e.a}
+              </FaqItem>
+            ))}
+
+            <section className="rounded-2xl border border-black/5 bg-white/60 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <p className="text-slate-700 dark:text-white/80">
+                Want more context and examples? Read the{' '}
+                <Link href="/blog" className="text-blue-600 hover:underline dark:text-blue-300">
+                  market analysis blog
+                </Link>
+                .
+              </p>
+            </section>
+          </div>
         </div>
-
-        <div className="space-y-4">
-          {FAQ_ENTRIES.map((e) => (
-            <FaqItem key={e.q} q={e.q}>
-              {e.a}
-            </FaqItem>
-          ))}
-
-          <section className="rounded-2xl border border-black/5 bg-white/60 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
-            <p className="text-slate-700 dark:text-white/80">
-              Want more context and examples? Read the{' '}
-              <Link href="/blog" className="text-blue-600 hover:underline dark:text-blue-300">
-                market analysis blog
-              </Link>
-              .
-            </p>
-          </section>
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
 
