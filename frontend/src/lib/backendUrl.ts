@@ -1,14 +1,18 @@
 export function getBackendBaseUrl(): string {
-  const isDev = process.env.NODE_ENV === "development";
-  const explicit = isDev ? process.env.NEXT_PUBLIC_SOCKET_URL : undefined;
-  if (explicit) return explicit;
+  const explicit = process.env.NEXT_PUBLIC_SOCKET_URL;
+  if (explicit) return explicit.replace(/\/+$/, "");
 
   if (typeof window !== "undefined") {
-    // Default prod deployment in this project: frontend :3105, backend :3101
-    const protocol = window.location.protocol;
-    const host = window.location.hostname;
-    const backendPort = "3101";
-    return `${protocol}//${host}:${backendPort}`;
+    const { protocol, hostname, port, origin } = window.location;
+
+    // Default deployment in this project: frontend :3105, backend :3101
+    if (port === "3105") {
+      return `${protocol}//${hostname}:3101`;
+    }
+
+    // If you're using a reverse proxy (nginx) and serving everything on the same domain,
+    // use the site origin (nginx should proxy /socket.io and /api to the backend).
+    return origin;
   }
 
   // SSR/build fallback
