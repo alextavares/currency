@@ -31,6 +31,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.4,
     },
     {
+      url: `${siteUrl}/rss.xml`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.2,
+    },
+    {
       url: `${siteUrl}/blog`,
       lastModified: now,
       changeFrequency: 'daily',

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from 'sonner';
+import SiteNav from "@/components/SiteNav";
 
 function getSiteUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || 'https://liveforexstrength.com').replace(/\/+$/, '');
@@ -72,6 +73,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="LiveForexStrength RSS"
+          href="/rss.xml"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
@@ -89,6 +96,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        <SiteNav />
         {children}
         <Toaster position="top-right" />
       </body>
