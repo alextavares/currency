@@ -1,0 +1,6 @@
+These flag SVG assets are sourced from the Twemoji project:
+https://github.com/twitter/twemoji
+
+License: CC-BY 4.0
+https://creativecommons.org/licenses/by/4.0/
+

@@ -1,0 +1,31 @@
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: currency_db
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=currency_strength
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - currency_net
+
+  redis:
+    image: redis:alpine
+    container_name: currency_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - currency_net
+
+volumes:
+  timescaledb_data:
+
+networks:
+  currency_net:
+    driver: bridge

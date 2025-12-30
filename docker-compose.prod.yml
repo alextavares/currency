@@ -1,0 +1,69 @@
+name: currency_strength
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: currency_db
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=currency_strength
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - currency_net
+
+  redis:
+    image: redis:alpine
+    container_name: currency_redis
+    restart: unless-stopped
+    networks:
+      - currency_net
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DB_HOST=timescaledb
+      - DB_PORT=5432
+      - DB_NAME=currency_strength
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - timescaledb
+      - redis
+    ports:
+      - "3101:3001"
+    restart: unless-stopped
+    networks:
+      - currency_net
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Set this in a root `.env` for docker compose, e.g.:
+        # NEXT_PUBLIC_SOCKET_URL=http://YOUR_DOMAIN_OR_IP:3001
+        NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-http://localhost:3001}
+    environment:
+      - NODE_ENV=production
+      - PORT=3005
+    depends_on:
+      - backend
+    ports:
+      - "3105:3005"
+    restart: unless-stopped
+    networks:
+      - currency_net
+
+volumes:
+  timescaledb_data:
+
+networks:
+  currency_net:
+    driver: bridge
