@@ -27,6 +27,29 @@ export default function BlogIndex() {
 
   return (
     <div className="container mx-auto py-10 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Dashboard',
+                item: 'https://liveforexstrength.com/',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Blog',
+                item: 'https://liveforexstrength.com/blog',
+              },
+            ],
+          }),
+        }}
+      />
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold tracking-tight">Market Analysis</h1>
         <Link 

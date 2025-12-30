@@ -59,8 +59,37 @@ export default async function BlogPost({ params }: Props) {
     notFound();
   }
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Dashboard',
+        item: 'https://liveforexstrength.com/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://liveforexstrength.com/blog',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: `https://liveforexstrength.com/blog/${slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="container mx-auto py-10 px-4 max-w-4xl">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <Link 
         href="/blog" 
         className="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 mb-8 group"
