@@ -62,4 +62,3 @@ Sempre que você der push no GitHub:
 ```bash
 ssh innerai 'cd /srv/currency && ./deploy.sh'
 ```
-

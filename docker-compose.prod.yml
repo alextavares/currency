@@ -21,23 +21,26 @@ services:
     networks:
       - currency_net
 
-  backend:
-    build:
-      context: ./backend
-    environment:
-      - NODE_ENV=production
-      - PORT=3001
-      - DB_HOST=timescaledb
-      - DB_PORT=5432
-      - DB_NAME=currency_strength
-      - DB_USER=postgres
-      - DB_PASSWORD=password
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - timescaledb
-      - redis
-    ports:
+	  backend:
+	    build:
+	      context: ./backend
+	    environment:
+	      - NODE_ENV=production
+	      - PORT=3001
+	      - DB_HOST=timescaledb
+	      - DB_PORT=5432
+	      - DB_NAME=currency_strength
+	      - DB_USER=postgres
+	      - DB_PASSWORD=password
+	      # Optional (only if you want OANDA polling; MT5 pusher doesn't need it)
+	      - OANDA_ENV=${OANDA_ENV:-practice}
+	      - OANDA_API_TOKEN=${OANDA_API_TOKEN:-}
+	      - OANDA_ACCOUNT_ID=${OANDA_ACCOUNT_ID:-}
+	      - FOREX_POLL_INTERVAL_MS=${FOREX_POLL_INTERVAL_MS:-60000}
+	    depends_on:
+	      - timescaledb
+	      - redis
+	    ports:
       - "3101:3001"
     restart: unless-stopped
     networks:
