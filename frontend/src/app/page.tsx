@@ -1,6 +1,16 @@
 import StrengthDashboard from "@/components/StrengthDashboard";
 import HistoryChart from "@/components/HistoryChart";
 import AlertManager from "@/components/AlertManager";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Live Forex Strength Meter (5m–1W)",
+  description:
+    "Live forex currency strength meter for the 8 major currencies (USD, EUR, GBP, JPY, CHF, CAD, AUD, NZD) across multiple timeframes.",
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function Home() {
   return (
@@ -13,6 +23,20 @@ export default function Home() {
           <HistoryChart />
           <AlertManager />
         </div>
+        <section className="rounded-2xl border border-black/5 bg-white/60 p-6 text-slate-700 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-white/80">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+            What is a Forex Currency Strength Meter?
+          </h2>
+          <p className="mt-2 leading-relaxed">
+            A currency strength meter estimates which major currencies are strongest and weakest relative to each other.
+            It aggregates price moves across multiple FX pairs so you can quickly spot strong-vs-weak combinations and pick pairs
+            that trend more cleanly.
+          </p>
+          <p className="mt-3 leading-relaxed">
+            Use the timeframe buttons to switch between short-term momentum (e.g., 5m/15m) and higher-timeframe bias (e.g., 4h/1W).
+            Strength scores range from 0–100.
+          </p>
+        </section>
       </div>
     </main>
   );

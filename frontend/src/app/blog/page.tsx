@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/blog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Metadata } from 'next';
 
-export const metadata = {
-  title: 'Market Analysis Blog | Currency Strength Meter',
-  description: 'Daily forex and crypto market analysis, currency strength insights, and trading opportunities.',
+export const metadata: Metadata = {
+  title: 'Market Analysis Blog',
+  description: 'Forex market analysis, currency strength insights, and strength-based trade ideas.',
+  alternates: { canonical: '/blog' },
 };
 
 export default function BlogIndex() {

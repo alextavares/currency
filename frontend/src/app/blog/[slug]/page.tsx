@@ -15,12 +15,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) {
     return {
       title: 'Post Not Found',
+      robots: { index: false, follow: false },
     };
   }
+
+  const canonical = `/blog/${slug}`;
+  const publishedTime = safeDate(post.date);
 
   return {
     title: `${post.title} | Currency Strength Analysis`,
     description: post.excerpt,
+    alternates: { canonical },
+    openGraph: {
+      type: 'article',
+      url: canonical,
+      title: post.title,
+      description: post.excerpt,
+      publishedTime: publishedTime ?? undefined,
+      authors: post.author ? [post.author] : undefined,
+      images: [{ url: '/opengraph-image' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: ['/opengraph-image'],
+    },
   };
 }
 
@@ -77,4 +97,11 @@ export default async function BlogPost({ params }: Props) {
       </div>
     </div>
   );
+}
+
+function safeDate(value: string | undefined): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString();
 }

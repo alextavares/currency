@@ -46,7 +46,9 @@ Host github.com
 cp .env.example .env
 ```
 
-Edite `NEXT_PUBLIC_SOCKET_URL` para o seu domínio/IP (idealmente com HTTPS quando tiver).
+Edite:
+- `NEXT_PUBLIC_SOCKET_URL` para o seu domínio/IP + porta do backend (ex: `https://liveforexstrength.com` via proxy, ou `http://IP:3101`)
+- `NEXT_PUBLIC_SITE_URL` para o domínio público (ex: `https://liveforexstrength.com`)
 
 ## 3) Subir tudo (build + up)
 
