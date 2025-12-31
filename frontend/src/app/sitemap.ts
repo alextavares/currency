@@ -20,6 +20,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
+      url: `${siteUrl}/heatmap`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+    {
       url: `${siteUrl}/currencies`,
       lastModified: now,
       changeFrequency: 'weekly',

@@ -11,6 +11,9 @@ import { AlertService } from './services/alerts/AlertService';
 import { OandaForexService } from './services/data/OandaForexService';
 import { PriceHistoryStore } from './services/data/PriceHistoryStore';
 import { DashboardCalculator } from './services/dashboard/DashboardCalculator';
+import { DASHBOARD_TIMEFRAMES, type DashboardTimeframe } from './services/dashboard/DashboardCalculator';
+import { fillMissingForexPairs } from './services/data/ForexTriangulator';
+import { FOREX_PAIRS } from './config/constants';
 
 dotenv.config();
 
@@ -57,6 +60,70 @@ app.use('/api/mt4', createMT4Bridge(calculator, priceStore));
 // Dashboard JSON (latest computed snapshot)
 app.get('/api/dashboard', (req, res) => {
     res.json((req.app as any).locals.lastDashboard || null);
+});
+
+// Heatmap JSON: pair moves (pips / percent) across timeframes.
+app.get('/api/heatmap', (req, res) => {
+    const at = priceStore.getLatestTime();
+    if (!at) return res.json(null);
+
+    const requiredSymbols = ["EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY"];
+    const valuesByTf: Record<DashboardTimeframe, Array<{ pair: string; pips: number; percent: number }> | null> = {
+        "5m": null,
+        "15m": null,
+        "30m": null,
+        "1h": null,
+        "4h": null,
+        "12h": null,
+        "24h": null,
+        "1w": null,
+    };
+
+    for (const tf of Object.keys(DASHBOARD_TIMEFRAMES) as DashboardTimeframe[]) {
+        const baselineTime = at - DASHBOARD_TIMEFRAMES[tf];
+
+        const nowBase: Record<string, number> = {};
+        const pastBase: Record<string, number> = {};
+
+        let ok = true;
+        for (const symbol of requiredSymbols) {
+            const now = priceStore.getPriceAtOrBefore(symbol, at);
+            const past = priceStore.getPriceAtOrBefore(symbol, baselineTime);
+            if (!now || !past) {
+                ok = false;
+                break;
+            }
+            nowBase[symbol] = now.mid;
+            pastBase[symbol] = past.mid;
+        }
+
+        if (!ok) {
+            valuesByTf[tf] = null;
+            continue;
+        }
+
+        const nowAll = fillMissingForexPairs(nowBase);
+        const pastAll = fillMissingForexPairs(pastBase);
+
+        valuesByTf[tf] = FOREX_PAIRS.map((pair) => {
+            const now = nowAll[pair];
+            const past = pastAll[pair];
+            if (!now || !past) return { pair, pips: 0, percent: 0 };
+
+            const quote = pair.slice(3, 6);
+            const pipSize = quote === 'JPY' ? 0.01 : 0.0001;
+            const pips = (now - past) / pipSize;
+            const percent = ((now / past) - 1) * 100;
+
+            return {
+                pair,
+                pips: Math.round(pips * 10) / 10,
+                percent: Math.round(percent * 1000) / 1000,
+            };
+        });
+    }
+
+    res.json({ at, valuesByTf });
 });
 
 // Debug: shows last MT5/MT4 push (timestamp + counts)

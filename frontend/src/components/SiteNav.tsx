@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 const LINKS: Array<{ href: string; label: string }> = [
   { href: '/', label: 'Dashboard' },
+  { href: '/heatmap', label: 'Heatmap' },
   { href: '/currencies', label: 'Currencies' },
   { href: '/timeframes', label: 'Timeframes' },
   { href: '/pairs', label: 'Pairs' },
