@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from 'sonner';
 import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 
 function getSiteUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || 'https://liveforexstrength.com').replace(/\/+$/, '');
@@ -98,6 +99,7 @@ export default function RootLayout({
       <body className="antialiased">
         <SiteNav />
         {children}
+        <SiteFooter />
         <Toaster position="top-right" />
       </body>
     </html>

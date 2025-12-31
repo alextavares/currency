@@ -2,6 +2,7 @@ import StrengthDashboard from "@/components/StrengthDashboard";
 import HistoryChart from "@/components/HistoryChart";
 import AlertManager from "@/components/AlertManager";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { isDashboardTimeframe, type DashboardTimeframe } from "@/lib/dashboardTimeframes";
 
 export const metadata: Metadata = {
@@ -45,6 +46,26 @@ export default async function Home({ searchParams }: Props) {
             Use the timeframe buttons to switch between short-term momentum (e.g., 5m/15m) and higher-timeframe bias (e.g., 4h/1W).
             Strength scores range from 0–100.
           </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Link
+              href="/how-it-works"
+              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-white/90"
+            >
+              How it works →
+            </Link>
+            <Link
+              href="/heatmap"
+              className="rounded-xl border border-black/10 bg-white/70 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+            >
+              Forex heatmap →
+            </Link>
+            <Link
+              href="/pairs"
+              className="rounded-xl border border-black/10 bg-white/70 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+            >
+              Browse pairs →
+            </Link>
+          </div>
         </section>
       </div>
     </main>

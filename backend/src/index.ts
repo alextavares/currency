@@ -54,6 +54,12 @@ if (process.env.OANDA_API_TOKEN && process.env.OANDA_ACCOUNT_ID) {
 app.use(cors());
 app.use(express.json());
 
+// Prevent indexing of JSON endpoints.
+app.use(['/api', '/health'], (req, res, next) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    next();
+});
+
 // Routes
 app.use('/api/mt4', createMT4Bridge(calculator, priceStore));
 

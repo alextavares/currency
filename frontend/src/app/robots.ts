@@ -12,9 +12,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
+        disallow: ['/api/', '/socket.io/', '/health'],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
   };
 }
-

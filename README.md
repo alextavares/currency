@@ -20,3 +20,6 @@ Veja `mt5/README.md`.
 
 Veja `docs/deploy-contabo.md`.
 
+## Monitoring (recomendado)
+
+Veja `docs/monitoring.md`.

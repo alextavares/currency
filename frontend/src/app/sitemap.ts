@@ -26,6 +26,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${siteUrl}/how-it-works`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
       url: `${siteUrl}/currencies`,
       lastModified: now,
       changeFrequency: 'weekly',
@@ -48,6 +54,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.4,
+    },
+    {
+      url: `${siteUrl}/disclaimer`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.2,
+    },
+    {
+      url: `${siteUrl}/privacy`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.2,
+    },
+    {
+      url: `${siteUrl}/terms`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.2,
     },
     {
       url: `${siteUrl}/faq`,
