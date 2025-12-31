@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getAllPosts } from '@/lib/blog';
+import { MAJOR_PAIRS, getPairPageSlug } from '@/lib/majorPairs';
 
 function getSiteUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || 'https://liveforexstrength.com').replace(/\/+$/, '');
@@ -26,6 +27,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${siteUrl}/timeframes`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.5,
+    },
+    {
+      url: `${siteUrl}/pairs`,
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.5,
@@ -72,6 +79,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.4,
   }));
 
+  const pairRoutes: MetadataRoute.Sitemap = MAJOR_PAIRS.map((pair) => ({
+    url: `${siteUrl}/pairs/${getPairPageSlug(pair)}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.35,
+  }));
+
   const posts = getAllPosts();
   const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${siteUrl}/blog/${post.slug}`,
@@ -80,7 +94,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...currencyRoutes, ...timeframeRoutes, ...postRoutes];
+  return [...staticRoutes, ...currencyRoutes, ...timeframeRoutes, ...pairRoutes, ...postRoutes];
 }
 
 function safeDate(value: string | undefined): Date | null {
