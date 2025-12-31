@@ -19,6 +19,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
+      url: `${siteUrl}/currencies`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.5,
+    },
+    {
+      url: `${siteUrl}/timeframes`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.5,
+    },
+    {
       url: `${siteUrl}/about`,
       lastModified: now,
       changeFrequency: 'monthly',
@@ -44,6 +56,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
+  const currencyCodes = ['usd', 'eur', 'gbp', 'jpy', 'chf', 'cad', 'aud', 'nzd'] as const;
+  const currencyRoutes: MetadataRoute.Sitemap = currencyCodes.map((code) => ({
+    url: `${siteUrl}/currencies/${code}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.4,
+  }));
+
+  const tfKeys = ['5m', '15m', '30m', '1h', '4h', '12h', '24h', '1w'] as const;
+  const timeframeRoutes: MetadataRoute.Sitemap = tfKeys.map((tf) => ({
+    url: `${siteUrl}/timeframes/${tf}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.4,
+  }));
+
   const posts = getAllPosts();
   const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${siteUrl}/blog/${post.slug}`,
@@ -52,7 +80,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...postRoutes];
+  return [...staticRoutes, ...currencyRoutes, ...timeframeRoutes, ...postRoutes];
 }
 
 function safeDate(value: string | undefined): Date | null {

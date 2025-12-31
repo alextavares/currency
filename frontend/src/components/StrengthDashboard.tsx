@@ -35,10 +35,14 @@ function formatAgo(seconds: number): string {
   return `${hours}h`;
 }
 
-export default function StrengthDashboard() {
+export default function StrengthDashboard({ initialTf }: { initialTf?: DashboardTimeframe }) {
   const { payload, updatedAt, isConnected, bestGuessDefaultTf } = useDashboardSocket();
-  const [selectedTf, setSelectedTf] = useState<DashboardTimeframe>(bestGuessDefaultTf);
+  const [selectedTf, setSelectedTf] = useState<DashboardTimeframe>(initialTf ?? bestGuessDefaultTf);
   const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!initialTf) setSelectedTf(bestGuessDefaultTf);
+  }, [bestGuessDefaultTf, initialTf]);
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);

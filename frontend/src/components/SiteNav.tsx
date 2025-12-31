@@ -2,6 +2,8 @@ import Link from 'next/link';
 
 const LINKS: Array<{ href: string; label: string }> = [
   { href: '/', label: 'Dashboard' },
+  { href: '/currencies', label: 'Currencies' },
+  { href: '/timeframes', label: 'Timeframes' },
   { href: '/blog', label: 'Blog' },
   { href: '/about', label: 'About' },
   { href: '/faq', label: 'FAQ' },
@@ -36,4 +38,3 @@ export default function SiteNav() {
     </header>
   );
 }
-
