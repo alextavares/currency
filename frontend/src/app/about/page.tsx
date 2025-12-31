@@ -14,6 +14,12 @@ export const metadata: Metadata = {
       'A live forex currency strength meter for major currencies across multiple timeframes.',
     images: [{ url: '/opengraph-image' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About LiveForexStrength',
+    description: 'A live forex currency strength meter for major currencies across multiple timeframes.',
+    images: ['/opengraph-image'],
+  },
 };
 
 export default function AboutPage() {
@@ -63,4 +69,3 @@ export default function AboutPage() {
     </main>
   );
 }
-

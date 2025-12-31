@@ -15,6 +15,13 @@ export const metadata: Metadata = {
       'Frequently asked questions about the LiveForexStrength currency strength meter, timeframes, and interpretation.',
     images: [{ url: '/opengraph-image' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'LiveForexStrength FAQ',
+    description:
+      'Frequently asked questions about the LiveForexStrength currency strength meter, timeframes, and interpretation.',
+    images: ['/opengraph-image'],
+  },
 };
 
 const FAQ_ENTRIES: Array<{ q: string; a: string }> = [
