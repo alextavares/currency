@@ -24,14 +24,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const publishedTime = safeDate(post.date);
 
   return {
-    title: `${post.title} | Currency Strength Analysis`,
-    description: post.excerpt,
+    // The root layout already applies the `| LiveForexStrength` template to `title`,
+    // so keep it short and avoid stacking suffixes in SERPs.
+    title: post.title,
+    description: post.excerpt || 'Forex market analysis and currency strength insights.',
     alternates: { canonical },
     openGraph: {
       type: 'article',
       url: canonical,
       title: post.title,
-      description: post.excerpt,
+      description: post.excerpt || 'Forex market analysis and currency strength insights.',
       publishedTime: publishedTime ?? undefined,
       authors: post.author ? [post.author] : undefined,
       images: [{ url: '/opengraph-image' }],
@@ -39,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title: post.title,
-      description: post.excerpt,
+      description: post.excerpt || 'Forex market analysis and currency strength insights.',
       images: ['/opengraph-image'],
     },
   };
