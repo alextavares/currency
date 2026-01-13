@@ -23,6 +23,7 @@ export const createMT4Bridge = (calculator: StrengthCalculator, priceStore: Pric
             priceStore.addPrices(numericPrices);
 
             const locals = (req.app as any).locals;
+            locals.lastFilledPrices = filledPrices;
             const prev = locals.lastReceivedPrices as Record<string, number> | undefined;
             const deltas: Record<string, number> = {};
             if (prev) {

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { getBackendBaseUrl } from "@/lib/backendUrl";
 import { DASHBOARD_TFS, type DashboardTimeframe } from "@/lib/dashboardTimeframes";
 import { MAJOR_PAIRS, type MajorPair } from "@/lib/majorPairs";
 
@@ -46,7 +47,8 @@ export default function ForexHeatmap({ initial }: { initial: HeatmapPayload | nu
   useEffect(() => {
     const poll = async () => {
       try {
-        const res = await fetch("/api/heatmap", { cache: "no-store" });
+        const baseUrl = getBackendBaseUrl();
+        const res = await fetch(`${baseUrl}/api/heatmap`, { cache: "no-store" });
         if (!res.ok) return;
         const json = (await res.json()) as HeatmapPayload | null;
         if (json) setPayload(json);
@@ -55,6 +57,7 @@ export default function ForexHeatmap({ initial }: { initial: HeatmapPayload | nu
       }
     };
 
+    poll();
     const id = setInterval(poll, 60_000);
     return () => clearInterval(id);
   }, []);
@@ -178,4 +181,3 @@ export default function ForexHeatmap({ initial }: { initial: HeatmapPayload | nu
     </section>
   );
 }
-

@@ -134,7 +134,12 @@ app.get('/api/heatmap', (req, res) => {
 
 // Debug: shows last MT5/MT4 push (timestamp + counts)
 app.get('/api/debug/mt4', (req, res) => {
-    res.json((req.app as any).locals.lastPricePush || null);
+    const locals = (req.app as any).locals;
+    res.json({
+        lastPricePush: locals.lastPricePush || null,
+        lastReceivedPrices: locals.lastReceivedPrices || null,
+        lastFilledPrices: locals.lastFilledPrices || null,
+    });
 });
 
 // History API
