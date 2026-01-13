@@ -6,9 +6,9 @@ import Link from "next/link";
 import { isDashboardTimeframe, type DashboardTimeframe } from "@/lib/dashboardTimeframes";
 
 export const metadata: Metadata = {
-  title: "Live Forex Strength Meter (5m–1W)",
+  title: "Live Forex Currency Strength Meter (Online Dashboard, 5m–1W)",
   description:
-    "Live forex currency strength meter for the 8 major currencies (USD, EUR, GBP, JPY, CHF, CAD, AUD, NZD) across multiple timeframes.",
+    "Live forex currency strength meter (online dashboard) for the 8 major currencies (USD, EUR, GBP, JPY, CHF, CAD, AUD, NZD) across multiple timeframes.",
   alternates: {
     canonical: "/",
   },

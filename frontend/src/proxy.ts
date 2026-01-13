@@ -5,7 +5,7 @@ function getCanonicalSiteUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || "https://liveforexstrength.com").replace(/\/+$/, "");
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   // Keep local dev predictable (avoid redirecting localhost -> production domain).
   if (process.env.NODE_ENV !== "production") return NextResponse.next();
 
@@ -25,9 +25,6 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    // Ignore Next.js internals.
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
 

@@ -11,10 +11,11 @@ function getSiteUrl(): string {
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Live Forex Strength Meter (5m–1W)",
+    default: "Live Forex Currency Strength Meter (Online, 5m–1W)",
     template: "%s | LiveForexStrength",
   },
-  description: "Real-time forex currency strength meter for the 8 major currencies across multiple timeframes.",
+  description:
+    "Live forex currency strength meter (online dashboard) for the 8 major currencies across multiple timeframes.",
   alternates: {
     canonical: "/",
   },
@@ -22,14 +23,16 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "LiveForexStrength",
-    title: "Live Forex Strength Meter (5m–1W)",
-    description: "Real-time forex currency strength meter for the 8 major currencies across multiple timeframes.",
+    title: "Live Forex Currency Strength Meter (Online, 5m–1W)",
+    description:
+      "Live forex currency strength meter (online dashboard) for the 8 major currencies across multiple timeframes.",
     images: [{ url: "/opengraph-image" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Live Forex Strength Meter (5m–1W)",
-    description: "Real-time forex currency strength meter for the 8 major currencies across multiple timeframes.",
+    title: "Live Forex Currency Strength Meter (Online, 5m–1W)",
+    description:
+      "Live forex currency strength meter (online dashboard) for the 8 major currencies across multiple timeframes.",
     images: ["/opengraph-image"],
   },
   robots: {
