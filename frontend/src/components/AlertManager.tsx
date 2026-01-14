@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Bell, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { io } from "socket.io-client";
 import { getBackendBaseUrl } from "@/lib/backendUrl";
 
@@ -22,21 +24,28 @@ export default function AlertManager() {
     const [currency, setCurrency] = useState('USD');
     const [condition, setCondition] = useState<'>' | '<'>('>');
     const [value, setValue] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         // Fetch existing alerts
+        setIsLoading(true);
         fetch(`${API_URL}/api/alerts`)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch alerts');
+                return res.json();
+            })
             .then(setAlerts)
-            .catch(console.error);
+            .catch((e) => {
+                console.error(e);
+                setError('Failed to load alerts');
+            })
+            .finally(() => setIsLoading(false));
 
         // Listen for triggers
         const socket = io(API_URL);
         socket.on('alert:triggered', (data: { message: string }) => {
-            toast.error(data.message, {
-                duration: 10000,
-                style: { background: '#ef4444', color: 'white', border: 'none' }
-            });
+            toast.error(data.message, { duration: 10000 });
             // Also play sound?
             new Audio('/alert.mp3').play().catch(() => { });
         });
@@ -58,6 +67,7 @@ export default function AlertManager() {
                     value: parseFloat(value)
                 })
             });
+            if (!res.ok) throw new Error('Failed to create alert');
             const newAlert = await res.json();
             setAlerts([...alerts, newAlert]);
             setValue('');
@@ -78,68 +88,97 @@ export default function AlertManager() {
     };
 
     return (
-        <Card className="bg-white/60 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 backdrop-blur">
+        <Card className="border-border/70 bg-card/50 shadow-none">
             <CardHeader>
-                <CardTitle>Price Alerts</CardTitle>
+                <CardTitle className="text-sm font-semibold tracking-tight">Alerts</CardTitle>
             </CardHeader>
             <CardContent>
                 {/* Form */}
-                <div className="flex flex-wrap gap-2 mb-6 items-end">
+                <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-end">
                     <div className="flex flex-col gap-1">
-                        <label className="text-xs text-slate-400">Currency</label>
+                        <label className="text-xs text-muted-foreground">Currency</label>
                         <select
                             value={currency}
                             onChange={e => setCurrency(e.target.value)}
-                            className="bg-white/70 dark:bg-slate-900/70 border-slate-200 dark:border-slate-700 rounded p-2 text-sm"
+                            className="h-9 rounded-lg border border-border/70 bg-background/40 px-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
                             {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                     </div>
 
                     <div className="flex flex-col gap-1">
-                        <label className="text-xs text-slate-400">Condition</label>
+                        <label className="text-xs text-muted-foreground">Condition</label>
                         <select
                             value={condition}
                             onChange={e => setCondition(e.target.value as any)}
-                            className="bg-white/70 dark:bg-slate-900/70 border-slate-200 dark:border-slate-700 rounded p-2 text-sm"
+                            className="h-9 rounded-lg border border-border/70 bg-background/40 px-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
                             <option value=">">Above (&gt;)</option>
                             <option value="<">Below (&lt;)</option>
                         </select>
                     </div>
 
-                    <div className="flex flex-col gap-1 w-24">
-                        <label className="text-xs text-slate-400">Value (0-10)</label>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-xs text-muted-foreground">Value (0–10)</label>
                         <input
                             type="number"
                             value={value}
                             onChange={e => setValue(e.target.value)}
-                            className="bg-white/70 dark:bg-slate-900/70 border-slate-200 dark:border-slate-700 rounded p-2 text-sm w-full"
+                            className="h-9 w-full rounded-lg border border-border/70 bg-background/40 px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             placeholder="7.5"
                             step="0.1"
                         />
                     </div>
 
-                    <Button onClick={addAlert} className="bg-[#6A22B3] hover:bg-[#5B1E99]">
-                        Add Alert
+                    <div className="sm:col-span-3">
+                      <Button onClick={addAlert} className="w-full">
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add alert
                     </Button>
+                    </div>
                 </div>
 
                 {/* List */}
                 <div className="space-y-2">
-                    {alerts.length === 0 && <p className="text-sm text-slate-500">No active alerts.</p>}
+                    {isLoading && (
+                      <div className="space-y-2">
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                      </div>
+                    )}
+
+                    {!isLoading && error && (
+                      <div className="rounded-2xl border border-border/60 bg-card/40 p-4 text-sm text-muted-foreground">
+                        {error}
+                      </div>
+                    )}
+
+                    {!isLoading && !error && alerts.length === 0 && (
+                      <div className="rounded-2xl border border-border/60 bg-card/40 p-5 text-center">
+                        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-muted/40 ring-1 ring-border/60">
+                          <Bell className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                        <div className="mt-3 text-sm font-semibold">No alerts yet</div>
+                        <div className="mt-1 text-sm text-muted-foreground">
+                          Create one to get notified when a currency crosses a threshold.
+                        </div>
+                      </div>
+                    )}
+
                     {alerts.map(alert => (
-                        <div key={alert.id} className="flex items-center justify-between bg-white/70 dark:bg-slate-900/50 p-2 rounded px-4 ring-1 ring-slate-200 dark:ring-0">
+                        <div key={alert.id} className="flex items-center justify-between rounded-2xl border border-border/60 bg-card/40 px-4 py-3">
                             <span className="text-sm">
-                                <span className="font-bold text-yellow-400">{alert.currency}</span>
-                                <span className="mx-2 text-slate-400">is {alert.condition === '>' ? 'above' : 'below'}</span>
-                                <span className="font-mono font-bold">{alert.value}</span>
+                                <span className="font-semibold">{alert.currency}</span>
+                                <span className="mx-2 text-muted-foreground">is {alert.condition === '>' ? 'above' : 'below'}</span>
+                                <span className="font-mono font-semibold tabular-nums">{alert.value}</span>
                             </span>
                             <button
+                                type="button"
                                 onClick={() => removeAlert(alert.id)}
-                                className="text-slate-500 hover:text-red-400"
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                aria-label={`Remove alert for ${alert.currency}`}
                             >
-                                ✕
+                                <X className="h-4 w-4" />
                             </button>
                         </div>
                     ))}

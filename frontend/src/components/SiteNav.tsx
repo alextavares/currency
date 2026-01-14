@@ -13,28 +13,30 @@ const LINKS: Array<{ href: string; label: string }> = [
 
 export default function SiteNav() {
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-white/70 backdrop-blur dark:border-white/10 dark:bg-black/20">
-      <div className="container mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-        <Link href="/" className="font-semibold tracking-tight text-slate-900 dark:text-white">
+    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/70 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <Link href="/" className="font-semibold tracking-tight text-foreground">
           LiveForexStrength
         </Link>
 
-        <nav className="flex items-center gap-1">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-black/5 hover:text-slate-900 dark:text-white/80 dark:hover:bg-white/10 dark:hover:text-white"
+        <nav className="flex items-center gap-1 overflow-x-auto">
+          <div className="flex items-center gap-1">
+            {LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="shrink-0 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+              >
+                {l.label}
+              </Link>
+            ))}
+            <a
+              href="/rss.xml"
+              className="shrink-0 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/40 hover:text-foreground"
             >
-              {l.label}
-            </Link>
-          ))}
-          <a
-            href="/rss.xml"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-black/5 hover:text-slate-900 dark:text-white/80 dark:hover:bg-white/10 dark:hover:text-white"
-          >
-            RSS
-          </a>
+              RSS
+            </a>
+          </div>
         </nav>
       </div>
     </header>

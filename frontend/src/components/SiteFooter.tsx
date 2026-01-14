@@ -15,11 +15,11 @@ export default function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-10 border-t border-black/5 bg-white/70 backdrop-blur dark:border-white/10 dark:bg-black/20">
-      <div className="container mx-auto max-w-5xl px-4 py-6 sm:px-6">
+    <footer className="mt-10 border-t border-border/70 bg-background/70 backdrop-blur">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-slate-600 dark:text-white/70">
-            © {year} <span className="font-semibold text-slate-900 dark:text-white">LiveForexStrength</span>
+          <div className="text-sm text-muted-foreground">
+            © {year} <span className="font-semibold text-foreground">LiveForexStrength</span>
           </div>
 
           <nav className="flex flex-wrap gap-x-4 gap-y-2">
@@ -27,7 +27,7 @@ export default function SiteFooter() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm font-medium text-slate-600 hover:text-slate-900 hover:underline dark:text-white/70 dark:hover:text-white"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground hover:underline"
               >
                 {l.label}
               </Link>
@@ -35,11 +35,10 @@ export default function SiteFooter() {
           </nav>
         </div>
 
-        <p className="mt-4 text-xs leading-relaxed text-slate-500 dark:text-white/50">
+        <p className="mt-4 text-xs leading-relaxed text-muted-foreground/80">
           Forex trading involves risk. This site provides informational tools only and does not provide investment advice.
         </p>
       </div>
     </footer>
   );
 }
-

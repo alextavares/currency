@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from 'sonner';
-import SiteNav from "@/components/SiteNav";
-import SiteFooter from "@/components/SiteFooter";
+import { Inter, JetBrains_Mono } from "next/font/google";
+
+const fontUi = Inter({
+  subsets: ["latin"],
+  variable: "--font-ui",
+  display: "swap",
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 function getSiteUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || 'https://liveforexstrength.com').replace(/\/+$/, '');
@@ -99,10 +110,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
-        <SiteNav />
+      <body className={`${fontUi.variable} ${fontMono.variable} font-sans antialiased`}>
         {children}
-        <SiteFooter />
         <Toaster position="top-right" />
       </body>
     </html>

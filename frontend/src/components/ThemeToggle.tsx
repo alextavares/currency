@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Moon, Sun } from "lucide-react";
 
 type Theme = "dark" | "light";
 
@@ -35,15 +36,13 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ring-1 transition-colors shadow-sm",
-        isDark
-          ? "bg-white/10 text-slate-100 ring-white/15 hover:bg-white/15"
-          : "bg-white/80 text-slate-900 ring-slate-200 hover:bg-white"
+        "inline-flex h-9 items-center gap-2 rounded-xl px-3 text-xs font-semibold ring-1 transition-colors",
+        "bg-card/40 text-foreground ring-border/70 hover:bg-muted/50"
       )}
       aria-label="Toggle theme"
     >
-      <span className={cn("h-2 w-2 rounded-full", isDark ? "bg-emerald-400" : "bg-amber-400")} />
-      {isDark ? "Dark" : "Light"}
+      {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+      <span className="hidden sm:inline">{isDark ? "Dark" : "Light"}</span>
     </button>
   );
 }
