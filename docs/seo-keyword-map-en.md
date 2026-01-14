@@ -45,3 +45,15 @@ Each post should:
 - Inspect + request indexing for: `/`, `/heatmap`, the 3 new landing pages, and the 3 new blog posts (7 URLs total)
 - Monitor: “Pages” → Crawled/Indexed, “Performance” → Queries/Pages for CTR improvements
 
+## Phase 2 (next 10 pages)
+
+11) **free online currency strength meter** → `/free-currency-strength-meter`  
+12) **currency strength meter dashboard** → `/currency-strength-dashboard`  
+13) **forex currency strength meter** → `/forex-currency-strength-meter`  
+14) **how to use a currency strength meter** → `/blog/2026-01-14-how-to-use-a-currency-strength-meter`  
+15) **currency strength trading strategy** → `/blog/2026-01-14-currency-strength-trading-strategy`  
+16) **best pairs to trade with currency strength** → `/blog/2026-01-14-best-pairs-to-trade-with-currency-strength`  
+17) **forex heatmap trading** → `/blog/2026-01-14-forex-heatmap-trading`  
+18) **5m vs 1h for currency strength** → `/blog/2026-01-14-5m-vs-1h-for-currency-strength`  
+19) **london session currency strength** → `/blog/2026-01-14-london-session-currency-strength`  
+20) **currency strength vs correlation** → `/blog/2026-01-14-currency-strength-vs-correlation`  
