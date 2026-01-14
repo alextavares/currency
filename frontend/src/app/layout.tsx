@@ -103,7 +103,7 @@ export default function RootLayout({
             __html: `(() => {
   try {
     const theme = localStorage.getItem('theme');
-    const isDark = theme !== 'light';
+    const isDark = theme === 'dark';
     document.documentElement.classList.toggle('dark', isDark);
   } catch {}
 })();`,
