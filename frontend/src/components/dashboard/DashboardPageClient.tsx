@@ -175,7 +175,7 @@ function StrengthBars({
   }, [scores]);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border/70 bg-card/40 p-4">
+    <div className="overflow-hidden rounded-2xl border border-border/70 bg-card/40 px-4 pb-4 pt-10 sm:pt-12">
       <div className="grid grid-cols-4 gap-4 sm:grid-cols-8">
         {(isLoading ? CURRENCIES.map((c) => ({ currency: c, score: 50 })) : ordered ?? []).map((row, idx) => {
           const isNeutral = isLoading || !scores;
@@ -190,17 +190,17 @@ function StrengthBars({
 
           return (
             <div key={row.currency} className="flex flex-col items-center gap-3">
-              <div className="relative h-44 w-full max-w-[34px]">
+              <div className="relative h-52 w-full max-w-[34px] sm:h-56">
                 <div className="absolute inset-0 rounded-full bg-muted/40 ring-1 ring-border/60 overflow-hidden">
                   <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-background/50 to-transparent" />
                   <div className={cn("absolute inset-x-0 bottom-0 rounded-full transition-[height] duration-700 ease-out", fill)} style={{ height: `${Math.max(4, height)}%` }} />
                 </div>
                 <div
                   className={cn(
-                    "absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full px-2 py-1 text-[11px] font-semibold ring-1 shadow-sm",
+                    "absolute left-1/2 -translate-x-1/2 rounded-full px-2 py-1 text-[11px] font-semibold ring-1 shadow-sm",
                     "bg-background/90 text-foreground ring-border/70"
                   )}
-                  style={{ bottom: `calc(${Math.max(4, height)}% + 6px)` }}
+                  style={{ bottom: `calc(min(${Math.max(4, height)}%, 92%) + 10px)` }}
                 >
                   {isLoading ? "—" : Math.round(v)}
                 </div>
