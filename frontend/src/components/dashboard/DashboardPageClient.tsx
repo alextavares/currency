@@ -127,6 +127,109 @@ function SegmentedTimeframe({
   );
 }
 
+type DashboardView = "table" | "bars" | "both";
+
+function ViewToggle({ value, onChange }: { value: DashboardView; onChange: (v: DashboardView) => void }) {
+  const items: Array<{ key: DashboardView; label: string }> = [
+    { key: "table", label: "Table" },
+    { key: "bars", label: "Bars" },
+    { key: "both", label: "Both" },
+  ];
+
+  return (
+    <div role="tablist" aria-label="Dashboard view" className="flex gap-1 rounded-xl bg-muted/40 p-1 ring-1 ring-border/50">
+      {items.map((it) => {
+        const active = it.key === value;
+        return (
+          <button
+            key={it.key}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(it.key)}
+            className={cn(
+              "h-8 rounded-lg px-2.5 text-xs font-semibold tracking-wide ring-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring",
+              active
+                ? "bg-background text-foreground ring-border/50 shadow-sm"
+                : "bg-transparent text-muted-foreground ring-transparent hover:bg-muted/50 hover:text-foreground"
+            )}
+          >
+            {it.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function StrengthBars({
+  scores,
+  isLoading,
+}: {
+  scores: Record<string, number> | null;
+  isLoading: boolean;
+}) {
+  const ordered = useMemo(() => {
+    if (!scores) return null;
+    return CURRENCIES.map((c) => ({ currency: c, score: scores[c] ?? 0 })).sort((a, b) => b.score - a.score);
+  }, [scores]);
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border/70 bg-card/40 p-4">
+      <div className="grid grid-cols-4 gap-4 sm:grid-cols-8">
+        {(isLoading ? CURRENCIES.map((c) => ({ currency: c, score: 50 })) : ordered ?? []).map((row, idx) => {
+          const isNeutral = isLoading || !scores;
+          const isStrong = isNeutral ? true : idx < 4;
+          const v = row.score;
+          const height = clamp(v, 0, 100);
+          const fill = isNeutral
+            ? "bg-gradient-to-b from-foreground/20 to-foreground/10"
+            : isStrong
+              ? "bg-gradient-to-b from-emerald-500 to-emerald-300"
+              : "bg-gradient-to-b from-rose-500 to-rose-300";
+
+          return (
+            <div key={row.currency} className="flex flex-col items-center gap-3">
+              <div className="relative h-44 w-full max-w-[34px]">
+                <div className="absolute inset-0 rounded-full bg-muted/40 ring-1 ring-border/60 overflow-hidden">
+                  <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-background/50 to-transparent" />
+                  <div className={cn("absolute inset-x-0 bottom-0 rounded-full transition-[height] duration-700 ease-out", fill)} style={{ height: `${Math.max(4, height)}%` }} />
+                </div>
+                <div
+                  className={cn(
+                    "absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full px-2 py-1 text-[11px] font-semibold ring-1 shadow-sm",
+                    "bg-background/90 text-foreground ring-border/70"
+                  )}
+                  style={{ bottom: `calc(${Math.max(4, height)}% + 6px)` }}
+                >
+                  {isLoading ? "—" : Math.round(v)}
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center gap-1">
+                <div className="relative h-9 w-9 overflow-hidden rounded-2xl ring-1 ring-border/60 bg-muted/30">
+                  <img
+                    src={FLAG_FILES[row.currency]}
+                    alt={row.currency}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-foreground/80">
+                    {row.currency.slice(0, 2)}
+                  </div>
+                </div>
+                <div className="text-xs font-semibold text-foreground">{row.currency}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function StrengthTable({
   scores,
   isLoading,
@@ -266,11 +369,20 @@ function EmptyState({
 export default function DashboardPageClient({ initialTf }: { initialTf?: DashboardTimeframe }) {
   const { payload, updatedAt, isConnected, bestGuessDefaultTf } = useDashboardSocket();
   const [selectedTf, setSelectedTf] = useState<DashboardTimeframe>(initialTf ?? bestGuessDefaultTf);
+  const [view, setView] = useState<DashboardView>("table");
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     if (!initialTf) setSelectedTf(bestGuessDefaultTf);
   }, [bestGuessDefaultTf, initialTf]);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem("dashboard_view");
+      const initial: DashboardView = stored === "bars" || stored === "both" || stored === "table" ? stored : "table";
+      setView(initial);
+    } catch {}
+  }, []);
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
@@ -443,16 +555,36 @@ export default function DashboardPageClient({ initialTf }: { initialTf?: Dashboa
                   <div className="text-sm font-semibold tracking-tight">Currency Strength</div>
                   <div className="mt-0.5 text-xs text-muted-foreground">Ranked (0–100) for the 8 major currencies.</div>
                 </div>
-                <SegmentedTimeframe
-                  value={selectedTf}
-                  onChange={setSelectedTf}
-                  enabledKeys={enabledKeys.size ? enabledKeys : new Set(DASHBOARD_TFS.map((t) => t.key))}
-                />
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                  <ViewToggle
+                    value={view}
+                    onChange={(v) => {
+                      setView(v);
+                      try {
+                        window.localStorage.setItem("dashboard_view", v);
+                      } catch {}
+                    }}
+                  />
+                  <SegmentedTimeframe
+                    value={selectedTf}
+                    onChange={setSelectedTf}
+                    enabledKeys={enabledKeys.size ? enabledKeys : new Set(DASHBOARD_TFS.map((t) => t.key))}
+                  />
+                </div>
               </div>
             </CardHeader>
             <CardContent className="p-4 pt-0">
               {isBooting ? (
-                <StrengthTable scores={null} isLoading />
+                view === "table" ? (
+                  <StrengthTable scores={null} isLoading />
+                ) : view === "bars" ? (
+                  <StrengthBars scores={null} isLoading />
+                ) : (
+                  <div className="space-y-4">
+                    <StrengthBars scores={null} isLoading />
+                    <StrengthTable scores={null} isLoading />
+                  </div>
+                )
               ) : !scores ? (
                 <EmptyState
                   title="Waiting for enough history"
@@ -461,7 +593,16 @@ export default function DashboardPageClient({ initialTf }: { initialTf?: Dashboa
                   actionLabel="Switch to 5m"
                 />
               ) : (
-                <StrengthTable scores={scores} isLoading={false} />
+                view === "table" ? (
+                  <StrengthTable scores={scores} isLoading={false} />
+                ) : view === "bars" ? (
+                  <StrengthBars scores={scores} isLoading={false} />
+                ) : (
+                  <div className="space-y-4">
+                    <StrengthBars scores={scores} isLoading={false} />
+                    <StrengthTable scores={scores} isLoading={false} />
+                  </div>
+                )
               )}
             </CardContent>
           </Card>
