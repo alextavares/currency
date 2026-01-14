@@ -69,7 +69,7 @@ export default function HistoryChart() {
                     )}
 
                     {!isLoading && !error && data.length > 0 && (
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <LineChart data={data}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.35)" />
                                 <XAxis
@@ -87,13 +87,16 @@ export default function HistoryChart() {
                                     cursor={{ stroke: "hsl(var(--border) / 0.6)" }}
                                     content={({ active, payload, label }) => {
                                         if (!active || !payload?.length) return null;
-                                        const v = payload[0]?.value as number | undefined;
+                                        const raw = payload[0]?.value;
+                                        const v = typeof raw === "number" ? raw : Number(raw);
                                         return (
                                             <div className="rounded-xl border border-border/70 bg-card/95 px-3 py-2 text-xs shadow-sm">
                                                 <div className="text-muted-foreground">{new Date(label as string).toLocaleString()}</div>
                                                 <div className="mt-1 flex items-center justify-between gap-4">
                                                     <span className="text-muted-foreground">Strength</span>
-                                                    <span className="font-mono tabular-nums text-foreground">{v?.toFixed(2)}</span>
+                                                    <span className="font-mono tabular-nums text-foreground">
+                                                      {Number.isFinite(v) ? v.toFixed(2) : "—"}
+                                                    </span>
                                                 </div>
                                             </div>
                                         );
