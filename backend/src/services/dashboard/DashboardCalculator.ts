@@ -111,27 +111,23 @@ export class DashboardCalculator {
     const std = Math.sqrt(variance);
     const z: Record<string, number> = {};
 
-    if (!Number.isFinite(std) || std === 0) {
-      for (const c of currencies) z[c] = 0;
-    } else {
-      for (const c of currencies) z[c] = (perCurrency[c] - mean) / std;
-    }
-
-    // Site-like "always stretched" scaling: min..max -> 0..100
-    const zVals = currencies.map((c) => z[c]);
-    const min = Math.min(...zVals);
-    const max = Math.max(...zVals);
-    const denom = max - min;
-
+    // Use sigmoid scaling instead of forced min-max to avoid 0/100 saturation.
+    const minStd = 0.0002;
+    const effectiveStd = Math.max(std, minStd);
     const scores: DashboardScores = {};
-    if (!Number.isFinite(denom) || denom === 0) {
+
+    if (!Number.isFinite(std)) {
       for (const c of currencies) scores[c] = 50;
       return scores;
     }
 
+    const steepness = 0.6;
+
     for (const c of currencies) {
-      const scaled = ((z[c] - min) / denom) * 100;
-      scores[c] = Math.round(Math.max(0, Math.min(100, scaled)));
+      const zScore = (perCurrency[c] - mean) / effectiveStd;
+      // Logistic Sigmoid: 100 / (1 + e^(-k * z))
+      const val = 100 / (1 + Math.exp(-steepness * zScore));
+      scores[c] = Math.round(val);
     }
 
     return scores;
