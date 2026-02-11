@@ -96,6 +96,9 @@ export class StrengthCalculator {
             return strengths;
         }
 
+        const alpha = Number.isFinite(this.smoothingAlpha) ? this.smoothingAlpha : 0.25;
+        const smooth = alpha > 0 && alpha < 1;
+
         const steepness = 0.6; // Controls how quickly values reach closer to 0/100. Lower = gentler.
         /* 
            Sigmoid scaling: 
