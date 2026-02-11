@@ -116,6 +116,11 @@ export class StrengthCalculator {
             // formula: 100 / (1 + Math.exp(-steepness * z))
             const target = 100 / (1 + Math.exp(-steepness * z));
 
+            // DEBUG: Log values to understand saturation
+            if (Math.random() < 0.05) { // Log 5% of updates to avoid spam
+                console.log(`[Strength] ${c}: z=${z.toFixed(2)} target=${target.toFixed(1)} mean=${mean.toFixed(4)} std=${effectiveStd.toFixed(6)} raw=${perCurrency[c].toFixed(4)}`);
+            }
+
             if (smooth && this.smoothedStrengths[c] !== undefined) {
                 strengths[c] = this.smoothedStrengths[c] * alpha + target * (1 - alpha);
             } else {
