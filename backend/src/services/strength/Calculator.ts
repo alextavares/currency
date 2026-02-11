@@ -12,6 +12,7 @@ export class StrengthCalculator {
     private readonly lookbackSamples: number;
     private readonly zMultiplier: number;
     private readonly smoothingAlpha: number;
+    private readonly minStd: number;
 
     private smoothedStrengths: StrengthData = {};
 
@@ -22,10 +23,13 @@ export class StrengthCalculator {
         this.maxHistorySamples = Math.max(this.lookbackSamples + 1, parseInt(process.env.STRENGTH_MAX_HISTORY_SAMPLES || '240', 10));
 
         // How aggressively to spread values away from 5.0 using z-scores.
-        this.zMultiplier = Number.parseFloat(process.env.STRENGTH_Z_MULTIPLIER || '1.7');
+        this.zMultiplier = Number.parseFloat(process.env.STRENGTH_Z_MULTIPLIER || '1.5');
 
         // Exponential smoothing for nicer UI (0 = no smoothing, 1 = never update).
         this.smoothingAlpha = Number.parseFloat(process.env.STRENGTH_SMOOTHING_ALPHA || '0.25');
+
+        // Minimum standard deviation to prevent noise amplification in quiet markets
+        this.minStd = Number.parseFloat(process.env.STRENGTH_MIN_STD || '0.0002');
     }
 
     public updatePrice(symbol: string, price: number): void {
@@ -82,21 +86,32 @@ export class StrengthCalculator {
         const mean = values.reduce((a, b) => a + b, 0) / values.length;
         const variance = values.reduce((acc, v) => acc + (v - mean) * (v - mean), 0) / values.length;
         const std = Math.sqrt(variance);
+        // Prevent division by zero and dampen noise by enforcing a minimum standard deviation
+        const effectiveStd = Math.max(std, this.minStd);
 
         const strengths: StrengthData = {};
-        if (!Number.isFinite(std) || std === 0) {
-            for (const c of currencies) strengths[c] = 5;
+        if (!Number.isFinite(std)) {
+            for (const c of currencies) strengths[c] = 50;
             this.smoothedStrengths = strengths;
             return strengths;
         }
 
-        const mult = Number.isFinite(this.zMultiplier) ? this.zMultiplier : 1.7;
-        const alpha = Number.isFinite(this.smoothingAlpha) ? this.smoothingAlpha : 0.25;
-        const smooth = alpha > 0 && alpha < 1;
+        const steepness = 0.6; // Controls how quickly values reach closer to 0/100. Lower = gentler.
+        /* 
+           Sigmoid scaling: 
+           z=0 -> 50
+           z=+3 -> ~85
+           z=+5 -> ~95
+           Avoids hard 0/100 limits.
+        */
 
         for (const c of currencies) {
-            const z = (perCurrency[c] - mean) / std;
-            const target = this.clamp(5 + z * mult, 0, 10);
+            const z = (perCurrency[c] - mean) / effectiveStd;
+
+            // Logistic Sigmoid: 1 / (1 + e^-x) -> range 0-1.
+            // We want range 0-100 centered at z=0.
+            // formula: 100 / (1 + Math.exp(-steepness * z))
+            const target = 100 / (1 + Math.exp(-steepness * z));
 
             if (smooth && this.smoothedStrengths[c] !== undefined) {
                 strengths[c] = this.smoothedStrengths[c] * alpha + target * (1 - alpha);
