@@ -121,7 +121,7 @@ export class DashboardCalculator {
       return scores;
     }
 
-    const steepness = 0.6;
+    const steepness = 1.5;
 
     for (const c of currencies) {
       const zScore = (perCurrency[c] - mean) / effectiveStd;
