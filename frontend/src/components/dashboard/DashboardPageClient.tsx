@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { DASHBOARD_TFS, type DashboardTimeframe, useDashboardSocket } from "@/hooks/useDashboardSocket";
+import SeoContent from "./SeoContent";
 
 const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "NZD"] as const;
 
@@ -613,6 +614,8 @@ export default function DashboardPageClient({ initialTf }: { initialTf?: Dashboa
           <AlertManager />
         </section>
       </div>
+
+      <SeoContent />
     </main>
   );
 }
