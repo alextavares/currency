@@ -247,32 +247,32 @@ function StrengthTable({
   return (
     <div className="overflow-hidden rounded-2xl ring-1 ring-border/70">
       <div className="max-h-[520px] overflow-auto">
-        <table className="w-full min-w-[540px] text-sm">
+        <table className="w-full text-sm">
           <thead className="sticky top-0 z-10 bg-card/90 backdrop-blur">
             <tr className="text-left text-xs text-muted-foreground">
-              <th className="px-4 py-3 font-medium">#</th>
-              <th className="px-4 py-3 font-medium">Currency</th>
-              <th className="px-4 py-3 font-medium text-right">Score</th>
-              <th className="px-4 py-3 font-medium">Strength</th>
+              <th className="px-2 py-3 font-medium sm:px-4">#</th>
+              <th className="px-2 py-3 font-medium sm:px-4">Currency</th>
+              <th className="px-2 py-3 font-medium text-right sm:px-4">Score</th>
+              <th className="px-2 py-3 font-medium sm:px-4 w-full">Strength</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40">
             {isLoading &&
               Array.from({ length: 8 }).map((_, i) => (
                 <tr key={i} className="bg-card/30">
-                  <td className="px-4 py-3">
+                  <td className="px-2 py-3 sm:px-4">
                     <Skeleton className="h-4 w-6" />
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
+                  <td className="px-2 py-3 sm:px-4">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <Skeleton className="h-8 w-8 rounded-full" />
-                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 w-12 sm:w-20" />
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-right">
-                    <Skeleton className="ml-auto h-4 w-14" />
+                  <td className="px-2 py-3 text-right sm:px-4">
+                    <Skeleton className="ml-auto h-4 w-8 sm:w-14" />
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-2 py-3 sm:px-4">
                     <Skeleton className="h-3 w-full" />
                   </td>
                 </tr>
@@ -287,10 +287,10 @@ function StrengthTable({
                     key={row.currency}
                     className="odd:bg-card/30 even:bg-card/20 hover:bg-muted/40 transition-colors"
                   >
-                    <td className="px-4 py-3 tabular-nums text-muted-foreground">{row.rank}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="relative h-8 w-8 overflow-hidden rounded-full ring-1 ring-border/50 bg-muted/30">
+                    <td className="px-2 py-3 tabular-nums text-muted-foreground sm:px-4">{row.rank}</td>
+                    <td className="px-2 py-3 sm:px-4">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="relative h-8 w-8 overflow-hidden rounded-full ring-1 ring-border/50 bg-muted/30 shrink-0">
                           <img
                             src={FLAG_FILES[row.currency]}
                             alt={row.currency}
@@ -304,16 +304,16 @@ function StrengthTable({
                           </div>
                         </div>
                         <div className="font-semibold tracking-wide text-foreground">{row.currency}</div>
-                        <span className={cn("ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] ring-1", toneClasses(tone))}>
+                        <span className={cn("hidden sm:inline-flex ml-1 items-center rounded-full px-2 py-0.5 text-[11px] ring-1", toneClasses(tone))}>
                           {tone === "strong" ? "Strong" : tone === "weak" ? "Weak" : "Neutral"}
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-right font-mono tabular-nums text-foreground">
+                    <td className="px-2 py-3 text-right font-mono tabular-nums text-foreground sm:px-4">
                       {Math.round(row.score)}
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="h-2 w-full rounded-full bg-muted/40 ring-1 ring-border/50 overflow-hidden">
+                    <td className="px-2 py-3 sm:px-4">
+                      <div className="h-2 w-full min-w-[60px] rounded-full bg-muted/40 ring-1 ring-border/50 overflow-hidden">
                         <div
                           className={cn(
                             "h-full rounded-full",
