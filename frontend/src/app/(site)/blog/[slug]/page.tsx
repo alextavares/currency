@@ -2,6 +2,7 @@ import { getPostBySlug, getAllPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Metadata } from 'next';
 import Script from 'next/script';
 
@@ -126,8 +127,8 @@ export default async function BlogPost({ params }: Props) {
             )}
           </header>
 
-          <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-img:rounded-xl">
-            <ReactMarkdown>{post.content}</ReactMarkdown>
+          <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-img:rounded-xl prose-table:border-collapse prose-th:border prose-th:border-gray-300 prose-th:p-2 prose-td:border prose-td:border-gray-300 prose-td:p-2">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
           </div>
         </article>
 
