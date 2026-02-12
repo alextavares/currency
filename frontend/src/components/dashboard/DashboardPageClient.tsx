@@ -471,6 +471,67 @@ export default function DashboardPageClient({ initialTf }: { initialTf?: Dashboa
       </header>
 
       <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 sm:px-6">
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <Card className="border-border/70 bg-card/50 shadow-none lg:col-span-12">
+            <CardHeader className="p-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <div className="text-sm font-semibold tracking-tight">Currency Strength</div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">Ranked (0–100) for the 8 major currencies.</div>
+                </div>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                  <ViewToggle
+                    value={view}
+                    onChange={(v) => {
+                      setView(v);
+                      try {
+                        window.localStorage.setItem("dashboard_view", v);
+                      } catch { }
+                    }}
+                  />
+                  <SegmentedTimeframe
+                    value={selectedTf}
+                    onChange={setSelectedTf}
+                    enabledKeys={enabledKeys.size ? enabledKeys : new Set(DASHBOARD_TFS.map((t) => t.key))}
+                  />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              {isBooting ? (
+                view === "table" ? (
+                  <StrengthTable scores={null} isLoading />
+                ) : view === "bars" ? (
+                  <StrengthBars scores={null} isLoading />
+                ) : (
+                  <div className="space-y-4">
+                    <StrengthBars scores={null} isLoading />
+                    <StrengthTable scores={null} isLoading />
+                  </div>
+                )
+              ) : !scores ? (
+                <EmptyState
+                  title="Waiting for enough history"
+                  description={`No scores available yet for ${selectedTf.toUpperCase()}. Keep it open for a few minutes, or switch to a faster timeframe.`}
+                  actionHref="/?tf=5m"
+                  actionLabel="Switch to 5m"
+                />
+              ) : (
+                view === "table" ? (
+                  <StrengthTable scores={scores} isLoading={false} />
+                ) : view === "bars" ? (
+                  <StrengthBars scores={scores} isLoading={false} />
+                ) : (
+                  <div className="space-y-4">
+                    <StrengthBars scores={scores} isLoading={false} />
+                    <StrengthTable scores={scores} isLoading={false} />
+                  </div>
+                )
+              )}
+            </CardContent>
+          </Card>
+        </section>
+
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="border-border/70 bg-card/50 shadow-none">
             <CardHeader className="p-4">
@@ -547,70 +608,9 @@ export default function DashboardPageClient({ initialTf }: { initialTf?: Dashboa
           </Card>
         </section>
 
-        <section className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <Card className="border-border/70 bg-card/50 shadow-none lg:col-span-12">
-            <CardHeader className="p-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <div className="text-sm font-semibold tracking-tight">Currency Strength</div>
-                  <div className="mt-0.5 text-xs text-muted-foreground">Ranked (0–100) for the 8 major currencies.</div>
-                </div>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-                  <ViewToggle
-                    value={view}
-                    onChange={(v) => {
-                      setView(v);
-                      try {
-                        window.localStorage.setItem("dashboard_view", v);
-                      } catch { }
-                    }}
-                  />
-                  <SegmentedTimeframe
-                    value={selectedTf}
-                    onChange={setSelectedTf}
-                    enabledKeys={enabledKeys.size ? enabledKeys : new Set(DASHBOARD_TFS.map((t) => t.key))}
-                  />
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              {isBooting ? (
-                view === "table" ? (
-                  <StrengthTable scores={null} isLoading />
-                ) : view === "bars" ? (
-                  <StrengthBars scores={null} isLoading />
-                ) : (
-                  <div className="space-y-4">
-                    <StrengthBars scores={null} isLoading />
-                    <StrengthTable scores={null} isLoading />
-                  </div>
-                )
-              ) : !scores ? (
-                <EmptyState
-                  title="Waiting for enough history"
-                  description={`No scores available yet for ${selectedTf.toUpperCase()}. Keep it open for a few minutes, or switch to a faster timeframe.`}
-                  actionHref="/?tf=5m"
-                  actionLabel="Switch to 5m"
-                />
-              ) : (
-                view === "table" ? (
-                  <StrengthTable scores={scores} isLoading={false} />
-                ) : view === "bars" ? (
-                  <StrengthBars scores={scores} isLoading={false} />
-                ) : (
-                  <div className="space-y-4">
-                    <StrengthBars scores={scores} isLoading={false} />
-                    <StrengthTable scores={scores} isLoading={false} />
-                  </div>
-                )
-              )}
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:col-span-12">
-            <HistoryChart />
-            <AlertManager />
-          </div>
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:col-span-12">
+          <HistoryChart />
+          <AlertManager />
         </section>
       </div>
     </main>
