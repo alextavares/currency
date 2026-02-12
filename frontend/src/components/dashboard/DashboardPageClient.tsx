@@ -379,9 +379,9 @@ export default function DashboardPageClient({ initialTf }: { initialTf?: Dashboa
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem("dashboard_view");
-      const initial: DashboardView = stored === "bars" || stored === "both" || stored === "table" ? stored : "table";
+      const initial: DashboardView = stored === "bars" || stored === "both" || stored === "table" ? stored : "both";
       setView(initial);
-    } catch {}
+    } catch { }
   }, []);
 
   useEffect(() => {
@@ -548,7 +548,7 @@ export default function DashboardPageClient({ initialTf }: { initialTf?: Dashboa
         </section>
 
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <Card className="border-border/70 bg-card/50 shadow-none lg:col-span-8">
+          <Card className="border-border/70 bg-card/50 shadow-none lg:col-span-12">
             <CardHeader className="p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -562,7 +562,7 @@ export default function DashboardPageClient({ initialTf }: { initialTf?: Dashboa
                       setView(v);
                       try {
                         window.localStorage.setItem("dashboard_view", v);
-                      } catch {}
+                      } catch { }
                     }}
                   />
                   <SegmentedTimeframe
@@ -607,7 +607,7 @@ export default function DashboardPageClient({ initialTf }: { initialTf?: Dashboa
             </CardContent>
           </Card>
 
-          <div className="space-y-6 lg:col-span-4">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:col-span-12">
             <HistoryChart />
             <AlertManager />
           </div>
